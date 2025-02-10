@@ -3,9 +3,11 @@ let pipeline;
 
 async function loadModel() {
   document.getElementById('loading').style.display = 'block';
-  // Load a text generation model (e.g., GPT-2 small)
   const { pipeline } = await import('@xenova/transformers');
-  return await pipeline('text-generation', 'Xenova/gpt2');
+  const model = await pipeline('text-generation', 'Xenova/gpt2');
+  document.getElementById('loading').style.display = 'none';
+  alert("Model loaded successfully!"); // Add this line
+  return model;
 }
 
 async function generateText() {
