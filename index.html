@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Text Generator</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Load TensorFlow.js or Transformers.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.4.0"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>AI Text Generator</h1>
+    <textarea id="input" placeholder="Enter your text..."></textarea>
+    <button onclick="generateText()">Generate</button>
+    <div id="output"></div>
+    <div id="loading" style="display: none;">Loading model... (~20 seconds)</div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
