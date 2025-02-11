@@ -1,13 +1,16 @@
-let generator;
+let qaPipeline;
+let developerContext = `The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France. 
+It is named after the engineer Gustave Eiffel, whose company designed and built the tower. 
+Constructed from 1887 to 1889, it was initially criticized by some of France's leading artists 
+and intellectuals for its design, but it has become a global cultural icon of France.`;
 
 async function loadModel() {
   document.getElementById('loading').style.display = 'block';
-
   try {
-    // Dynamically import the pipeline function from the CDN
     const { pipeline } = await import("https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/dist/transformers.min.js");
-    generator = await pipeline('text-generation', 'Xenova/gpt2');
+    qaPipeline = await pipeline('question-answering', 'Xenova/bert-base-uncased-squad2');
     document.getElementById('loading').style.display = 'none';
+    document.getElementById('context-display').innerText = `Current Context: ${developerContext}`;
     alert("Model loaded successfully!");
   } catch (error) {
     console.error('Error loading model:', error);
@@ -16,35 +19,41 @@ async function loadModel() {
   }
 }
 
-async function generateText() {
+async function answerQuestion() {
   try {
-    const input = document.getElementById('input').value;
+    const question = document.getElementById('question').value;
     const outputDiv = document.getElementById('output');
-    outputDiv.innerText = 'Generating...';
+    outputDiv.innerText = 'Analyzing...';
 
-    // Load model if not already loaded
-    if (!generator) {
-      await loadModel();
-    }
+    if (!qaPipeline) await loadModel();
 
-    // Generate text using the loaded model
-    const result = await generator(input);
-    outputDiv.innerText = result[0].generated_text;
-    document.getElementById('loading').style.display = 'none';
+    const result = await qaPipeline({
+      question: question,
+      context: developerContext
+    });
+
+    outputDiv.innerText = result.answer || "No answer found in context";
   } catch (error) {
     console.error(error);
-    outputDiv.innerText = 'Error generating text.';
+    outputDiv.innerText = 'Error processing question.';
   }
 }
 
-// Make sure the generateText function is accessible globally
-window.generateText = generateText;
+// Developer functions to manage context
+function setContext(newContext) {
+  developerContext = newContext;
+  document.getElementById('context-display').innerText = `Current Context: ${newContext}`;
+}
 
-// Optional: Preload model when page loads
+function getContext() {
+  return developerContext;
+}
+
+window.answerQuestion = answerQuestion;
+window.setContext = setContext;
+window.getContext = getContext;
+
 window.onload = async () => {
   await loadModel();
-
-  // Now that everything is loaded, set up the button click event
-  document.querySelector('button').onclick = generateText;
+  document.querySelector('button').onclick = answerQuestion;
 };
-
