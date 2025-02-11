@@ -1,20 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AI Text Generator</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text Generator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>AI Text Generator</h1>
-    <textarea id="input" placeholder="Enter your text..."></textarea>
-    <button onclick="generateText()">Generate</button>
-    <div id="output"></div>
-    <div id="loading" style="display: none;">Loading model... (~20 seconds)</div>
-  </div>
-  <script type="module" src="openaitest.js"></script>
+    <div class="container">
+        <h1>AI Text Generator</h1>
+        <textarea id="input" placeholder="Enter your text..."></textarea>
+        <button onclick="generateText()">Generate</button>
+        <div id="output"></div>
+    </div>
+    <script src="openaitest.js"></script> <!-- Ensure correct file path -->
 </body>
 </html>
+
 
 
 
