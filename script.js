@@ -1,4 +1,4 @@
-
+let pipeline;
 
 async function loadModel() {
   document.getElementById('loading').style.display = 'block';
@@ -6,7 +6,7 @@ async function loadModel() {
   // Directly use the global `pipeline` function from the CDN
   try {
     // Initialize the model outside the function to cache it
-    const generator = await pipeline('text-generation', 'Xenova/gpt2');
+    pipeline = await pipeline('text-generation', 'Xenova/gpt2');
     document.getElementById('loading').style.display = 'none';
     alert("Model loaded successfully!"); // Add this line
     return model;
