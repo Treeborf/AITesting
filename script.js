@@ -1,21 +1,18 @@
 let qaPipeline;
-let developerContext = `The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France. 
-It is named after the engineer Gustave Eiffel, whose company designed and built the tower. 
-Constructed from 1887 to 1889, it was initially criticized by some of France's leading artists 
-and intellectuals for its design, but it has become a global cultural icon of France.`;
+let developerContext = `The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France.`;
 
 async function loadModel() {
   document.getElementById('loading').style.display = 'block';
   try {
     const { pipeline } = await import("https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/dist/transformers.min.js");
-    qaPipeline = await pipeline('question-answering', 'Xenova/bert-base-uncased-squad2');
+    // Use a model with proper CDN configuration
+    qaPipeline = await pipeline('question-answering', 'Xenova/distilbert-base-uncased-distilled-squad');
     document.getElementById('loading').style.display = 'none';
     document.getElementById('context-display').innerText = `Current Context: ${developerContext}`;
-    alert("Model loaded successfully!");
   } catch (error) {
     console.error('Error loading model:', error);
     document.getElementById('loading').style.display = 'none';
-    alert('Failed to load model.');
+    alert('Failed to load model. Check console for details.');
   }
 }
 
@@ -39,7 +36,7 @@ async function answerQuestion() {
   }
 }
 
-// Developer functions to manage context
+// Developer context functions
 function setContext(newContext) {
   developerContext = newContext;
   document.getElementById('context-display').innerText = `Current Context: ${newContext}`;
@@ -53,7 +50,4 @@ window.answerQuestion = answerQuestion;
 window.setContext = setContext;
 window.getContext = getContext;
 
-window.onload = async () => {
-  await loadModel();
-  document.querySelector('button').onclick = answerQuestion;
-};
+window.onload = loadModel;
