@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const apiKey = process.env.OPENAI_API_KEY;
+const apiKey = process.env.OPEN_AI_API_KEY;
 
 app.post('/generate', async (req, res) => {
     try {
