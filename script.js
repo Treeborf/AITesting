@@ -1,12 +1,12 @@
-// Initialize the model outside the function to cache it
-let pipeline;
+
 
 async function loadModel() {
   document.getElementById('loading').style.display = 'block';
   
   // Directly use the global `pipeline` function from the CDN
   try {
-    const model = await window.pipeline('question-answering', 'Xenova/distilbert-base-uncased-distilled-squad');
+    // Initialize the model outside the function to cache it
+    const generator = await pipeline('text-generation', 'Xenova/gpt2');
     document.getElementById('loading').style.display = 'none';
     alert("Model loaded successfully!"); // Add this line
     return model;
