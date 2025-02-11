@@ -25,14 +25,11 @@ async function generateText() {
 
     // Load model if not already loaded
     if (!pipeline) {
-      pipeline = await loadModel();
+      await loadModel();
     }
 
-    // Generate text
-    const result = await pipeline(input, {
-      max_new_tokens: 50,  // Limit output length
-    });
-
+    // Generate text (default parameters)
+    const result = await pipelin(input);
     outputDiv.innerText = result[0].generated_text;
     document.getElementById('loading').style.display = 'none';
   } catch (error) {
@@ -43,5 +40,5 @@ async function generateText() {
 
 // Optional: Preload model when page loads
 window.onload = async () => {
-  pipeline = await loadModel();
+  await loadModel();
 };
