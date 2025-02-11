@@ -11,6 +11,7 @@ async function loadModel() {
     alert("Model loaded successfully!"); // Add this line
     return model;
   } catch (error) {
+    console.log(window.pipeline);  // This should log the pipeline function if it's available
     console.error('Error loading model:', error);
     document.getElementById('loading').style.display = 'none';
     alert('Failed to load model.');
