@@ -3,8 +3,10 @@ let pipeline;
 
 async function loadModel() {
   document.getElementById('loading').style.display = 'block';
-  const { pipeline } = await import('@xenova/transformers');
+  
+  // Since the library is already loaded globally via CDN, you can directly use the pipeline function
   const model = await pipeline('text-generation', 'Xenova/gpt2');
+  
   document.getElementById('loading').style.display = 'none';
   alert("Model loaded successfully!"); // Add this line
   return model;
@@ -38,3 +40,4 @@ async function generateText() {
 window.onload = async () => {
   pipeline = await loadModel();
 };
+
