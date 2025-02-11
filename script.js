@@ -6,7 +6,7 @@ async function loadModel() {
   try {
     const { pipeline } = await import("https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/dist/transformers.min.js");
     // Use a model with proper CDN configuration
-    qaPipeline = await pipeline('question-answering', 'Xenova/distilbert-base-uncased-distilled-squad');
+    qaPipeline = await pipeline('question-answering', 'Xenova/GPT-2');
     document.getElementById('loading').style.display = 'none';
     document.getElementById('context-display').innerText = `Current Context: ${developerContext}`;
   } catch (error) {
