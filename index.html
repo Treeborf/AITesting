@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Text Generator</title>
-    <link rel="stylesheet" href="style.css">
+  <title>QA System</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>AI Text Generator</h1>
-        <textarea id="input" placeholder="Enter your text..."></textarea>
-        <button onclick="generateText()">Generate</button>
-        <div id="output"></div>
-    </div>
-    <script src="script.js"></script> <!-- Ensure correct file path -->
+  <div class="container">
+    <h1>Question Answering System</h1>
+    <div id="context-display"></div>
+    <textarea id="question" placeholder="Enter your question..."></textarea>
+    <button onclick="answerQuestion()">Get Answer</button>
+    <div id="output"></div>
+    <div id="loading" style="display: none;">Loading model... (~20 seconds)</div>
+  </div>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
 
