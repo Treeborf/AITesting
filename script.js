@@ -4,9 +4,8 @@ let developerContext = `The Eiffel Tower is a wrought-iron lattice tower on the 
 async function loadModel() {
   document.getElementById('loading').style.display = 'block';
   try {
-    const { pipeline } = await import("https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/dist/transformers.min.js");
-    // Use a model with proper CDN configuration
-    qaPipeline = await pipeline('question-answering', 'Xenova/gpt2');
+    const { pipeline } = await import('@xenova/transformers');
+    qaPipelin = await pipeline('question-answering', 'Xenova/distilbert-base-uncased-distilled-squad');
     document.getElementById('loading').style.display = 'none';
     document.getElementById('context-display').innerText = `Current Context: ${developerContext}`;
   } catch (error) {
