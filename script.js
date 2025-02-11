@@ -43,4 +43,8 @@ window.generateText = generateText;
 // Optional: Preload model when page loads
 window.onload = async () => {
   await loadModel();
+
+  // Now that everything is loaded, set up the button click event
+  document.querySelector('button').onclick = generateText;
 };
+
