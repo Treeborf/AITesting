@@ -5,7 +5,7 @@ async function loadModel() {
 
   try {
     // Dynamically import the pipeline function from the CDN
-    const { pipeline } = await import("https://cdn.jsdelivr.net/npm/@xenova/transformers@2.4.0/dist/transformers.min.js");
+    const { pipeline } = await import("https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/dist/transformers.min.js");
     generator = await pipeline('text-generation', 'Xenova/gpt2');
     document.getElementById('loading').style.display = 'none';
     alert("Model loaded successfully!");
