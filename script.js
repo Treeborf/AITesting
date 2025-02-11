@@ -1,17 +1,15 @@
-let pipeline;
+let generator;
 
 async function loadModel() {
   document.getElementById('loading').style.display = 'block';
-  
-  // Directly use the global `pipeline` function from the CDN
+
   try {
-    // Initialize the model outside the function to cache it
-    pipeline = await pipeline('text-generation', 'Xenova/gpt2');
+    // Dynamically import the pipeline function from the CDN
+    const { pipeline } = await import("https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/dist/transformers.min.js");
+    generator = await pipeline('text-generation', 'Xenova/gpt2');
     document.getElementById('loading').style.display = 'none';
-    alert("Model loaded successfully!"); // Add this line
-    return model;
+    alert("Model loaded successfully!");
   } catch (error) {
-    console.log(window.pipeline);  // This should log the pipeline function if it's available
     console.error('Error loading model:', error);
     document.getElementById('loading').style.display = 'none';
     alert('Failed to load model.');
@@ -25,12 +23,12 @@ async function generateText() {
     outputDiv.innerText = 'Generating...';
 
     // Load model if not already loaded
-    if (!pipeline) {
+    if (!generator) {
       await loadModel();
     }
 
-    // Generate text (default parameters)
-    const result = await pipelin(input);
+    // Generate text using the loaded model
+    const result = await generator(input);
     outputDiv.innerText = result[0].generated_text;
     document.getElementById('loading').style.display = 'none';
   } catch (error) {
