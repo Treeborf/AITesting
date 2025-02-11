@@ -5,7 +5,7 @@ async function loadModel() {
   document.getElementById('loading').style.display = 'block';
   try {
     const { pipeline } = await import('@xenova/transformers');
-    qaPipelin = await pipeline('question-answering', 'Xenova/distilbert-base-uncased-distilled-squad');
+    qaPipeline = await pipeline('question-answering', 'Xenova/distilbert-base-uncased-distilled-squad');
     document.getElementById('loading').style.display = 'none';
     document.getElementById('context-display').innerText = `Current Context: ${developerContext}`;
   } catch (error) {
