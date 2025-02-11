@@ -6,7 +6,7 @@ async function loadModel() {
   
   // Directly use the global `pipeline` function from the CDN
   try {
-    const model = await window.pipeline('text-generation', 'Xenova/gpt2');
+    const model = await window.pipeline('question-answering', 'Xenova/distilbert-base-uncased-distilled-squad');
     document.getElementById('loading').style.display = 'none';
     alert("Model loaded successfully!"); // Add this line
     return model;
