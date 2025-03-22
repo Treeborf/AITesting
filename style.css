@@ -47,3 +47,29 @@ input[type="checkbox"]:checked + label {
 label {
   margin-left: 10px;
 }
+
+/* Add to style.css */
+#controls {
+  margin-bottom: 20px;
+}
+
+#newItem {
+  width: 60%;
+  padding: 8px;
+  margin-right: 10px;
+}
+
+.checklist input[type="text"]:focus {
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 2px #007bff33;
+}
+
+.delete-btn {
+  font-weight: bold;
+  user-select: none;
+}
+
+.delete-btn:hover {
+  color: #cc0000;
+}
