@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Travel Checklist</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Checklist-specific styles */
+    .checklist {
+      list-style-type: none;
+      padding: 0;
+    }
+    .checklist li {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 5px;
+    }
+    input[type="checkbox"]:checked + label {
+      text-decoration: line-through;
+      color: #888;
+    }
+    label {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Travel Checklist</h1>
+    <ul class="checklist">
+      <li><input type="checkbox" id="item1"><label for="item1">Passport</label></li>
+      <li><input type="checkbox" id="item2"><label for="item2">Travel tickets</label></li>
+      <li><input type="checkbox" id="item3"><label for="item3">Hotel reservation</label></li>
+      <li><input type="checkbox" id="item4"><label for="item4">Travel insurance</label></li>
+      <li><input type="checkbox" id="item5"><label for="item5">Currency exchange</label></li>
+      <li><input type="checkbox" id="item6"><label for="item6">Medications</label></li>
+      <li><input type="checkbox" id="item7"><label for="item7">Chargers/adapters</label></li>
+      <li><input type="checkbox" id="item8"><label for="item8">Toiletries</label></li>
+      <li><input type="checkbox" id="item9"><label for="item9">Emergency contacts</label></li>
+      <li><input type="checkbox" id="item10"><label for="item10">Travel itinerary</label></li>
+    </ul>
+
+    <button onclick="resetChecklist()">Reset Checklist</button>
+    
+    <!-- Back to Main Page Button -->
+    <div style="margin-top: 20px;">
+      <a href="index.html">
+        <button style="background: #6c757d;">Back to Main Page</button>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    function resetChecklist() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+      });
+    }
+  </script>
+</body>
+</html>
