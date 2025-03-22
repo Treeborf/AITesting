@@ -1,3 +1,4 @@
+/* style.css */
 body {
   font-family: Arial, sans-serif;
   max-width: 600px;
@@ -17,9 +18,32 @@ button {
   color: white;
   border: none;
   cursor: pointer;
+  margin: 5px;
 }
 
 #output {
   margin-top: 20px;
   white-space: pre-wrap;
+}
+
+/* Checklist styles */
+.checklist {
+  list-style-type: none;
+  padding: 0;
+}
+
+.checklist li {
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+}
+
+input[type="checkbox"]:checked + label {
+  text-decoration: line-through;
+  color: #888;
+}
+
+label {
+  margin-left: 10px;
 }
