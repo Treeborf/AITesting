@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!-- Add this to your HTML head -->
   <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.4.0"></script>
   <title>QA System</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    
     <h1>Question Answering System</h1>
     <div id="context-display" style="margin: 10px 0;"></div>
     <textarea id="question" placeholder="Enter your question..." style="width: 100%"></textarea>
     <button onclick="answerQuestion()">Get Answer</button>
     <div id="output" style="margin-top: 20px;"></div>
     <div id="loading" style="display: none;">Loading model... (~20 seconds)</div>
+    
+    <!-- Add Travel Checklist Button -->
+    <div style="margin-top: 30px;">
+      <a href="checklist.html">
+        <button style="background: #28a745;">Go to Travel Checklist</button>
+      </a>
+    </div>
   </div>
   <script type="module" src="script.js"></script>
 </body>
