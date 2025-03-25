@@ -17,25 +17,15 @@ describe("Travel Checklist Tests", () => {
     await browser.close();
   });
 
-  // Utility function to click buttons by text
-  async clickButtonByText(text) {
-    const buttons = await page.$$('button');
-    for (const button of buttons) {
-      const buttonText = await button.evaluate(el => el.textContent.trim());
-      if (buttonText === text) {
-        await button.click();
-        return true;
-      }
-    }
-    throw new Error(`Button with text "${text}" not found`);
-  }
-
   test("Adding a valid item", async () => {
-    // Clear existing items
-    await this.clickButtonByText("Reset All");
+    // Clear existing items using XPath
+    const resetButton = await page.$x('//button[contains(text(), "Reset All")]');
+    if (resetButton.length > 0) await resetButton[0].click();
     
     await page.type("#newItem", "Passport");
-    await this.clickButtonByText("Add Item");
+    // Use XPath for text matching
+    const addButton = await page.$x('//button[contains(text(), "Add Item")]');
+    await addButton[0].click();
     
     await page.waitForSelector('#checklist li');
     const items = await page.$$eval("#checklist li", items => items.length);
@@ -46,23 +36,33 @@ describe("Travel Checklist Tests", () => {
     const initialCount = await page.$$eval("#checklist li", items => items.length);
     
     // Clear input properly
-    await page.$eval('#newItem', input => input.value = '');
-    await this.clickButtonByText("Add Item");
+    await page.focus('#newItem');
+    await page.keyboard.down('Control');
+    await page.keyboard.press('A');
+    await page.keyboard.up('Control');
+    await page.keyboard.press('Backspace');
     
-    await page.waitForTimeout(500);
+    const addButton = await page.$x('//button[contains(text(), "Add Item")]');
+    await addButton[0].click();
+    
+    await page.waitForTimeout(500); // More reliable than Promise.resolve
     const newCount = await page.$$eval("#checklist li", items => items.length);
     expect(newCount).toBe(initialCount);
   });
 
   test("Check item and verify strikethrough", async () => {
+    // Add test item if needed using reliable selectors
     if ((await page.$$('#checklist li')).length === 0) {
       await page.type("#newItem", "Test Item");
-      await this.clickButtonByText("Add Item");
+      const addBtn = await page.$x('//button[contains(text(), "Add Item")]');
+      await addBtn[0].click();
       await page.waitForSelector('#checklist li');
     }
 
+    // Check the first checkbox
     await page.click('#checklist li:first-child input[type="checkbox"]');
     
+    // Verify text input style (matches your HTML structure)
     const textStyle = await page.$eval(
       '#checklist li:first-child input[type="text"]',
       el => ({
@@ -76,16 +76,21 @@ describe("Travel Checklist Tests", () => {
   });
 
   test("Reset checklist", async () => {
+    // Ensure there's at least one item
     if ((await page.$$('#checklist li')).length === 0) {
       await page.type("#newItem", "Test Item");
-      await this.clickButtonByText("Add Item");
+      const addBtn = await page.$x('//button[contains(text(), "Add Item")]');
+      await addBtn[0].click();
       await page.waitForSelector('#checklist li');
     }
 
-    await this.clickButtonByText("Reset All");
-    await page.waitForFunction(() => 
-      document.querySelectorAll('#checklist li').length === 0
-    );
+    const resetBtn = await page.$x('//button[contains(text(), "Reset All")]');
+    await resetBtn[0].click();
+    
+    // Wait for list to clear
+    await page.waitForFunction(() => {
+      return document.querySelectorAll('#checklist li').length === 0;
+    });
     
     const items = await page.$$eval("#checklist li", items => items.length);
     expect(items).toBe(0);
