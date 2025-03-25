@@ -33,5 +33,5 @@ jobs:
     - run: npm install  # Replaces npm ci since package-lock.json does not exist
     - run: npm run build --if-present
     - name: Run Jest Tests
-    - run: npx jest tests/checklist.test.js
+      run: npx jest tests/checklist.test.js
 
