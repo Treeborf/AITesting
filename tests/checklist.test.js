@@ -5,8 +5,8 @@ describe("Travel Checklist Tests", () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
       headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
     page = await browser.newPage();
     await page.goto("https://treeborf.github.io/AITesting/checklist.html");
@@ -18,38 +18,62 @@ describe("Travel Checklist Tests", () => {
   });
 
   test("Adding a valid item", async () => {
+    // Clear any existing items
+    await page.click('button:has-text("Reset All")');
+    
     await page.type("#newItem", "Passport");
-    // Use CSS selector with waitForSelector instead of XPath
-    const addButton = await page.waitForSelector('button:has-text("Add Item")');
-    await addButton.click();
-    await page.waitForSelector('#checklist > li');
+    await page.click('button:has-text("Add Item")');
+    
+    await page.waitForSelector('#checklist li');
     const items = await page.$$eval("#checklist li", items => items.length);
-    expect(items).toBeGreaterThan(0);
+    expect(items).toBe(1);
   });
 
   test("Prevent adding empty items", async () => {
     const initialCount = await page.$$eval("#checklist li", items => items.length);
-    // Clear input first
+    
+    // Ensure input is empty
     await page.$eval('#newItem', input => input.value = '');
-    const addButton = await page.waitForSelector('button:has-text("Add Item")');
-    await addButton.click();
+    await page.click('button:has-text("Add Item")');
+    
     await new Promise(resolve => setTimeout(resolve, 500));
     const newCount = await page.$$eval("#checklist li", items => items.length);
     expect(newCount).toBe(initialCount);
   });
 
   test("Check item and verify strikethrough", async () => {
-    await page.waitForSelector('#checklist input[type="checkbox"]');
-    await page.click('#checklist input[type="checkbox"]');
-    const textColor = await page.$eval('#checklist li', el => 
-      getComputedStyle(el.querySelector('span')).color
+    // Add test item if none exists
+    if ((await page.$$('#checklist li')).length === 0) {
+      await page.type("#newItem", "Test Item");
+      await page.click('button:has-text("Add Item")');
+      await page.waitForSelector('#checklist li');
+    }
+
+    // Check the first checkbox
+    await page.click('#checklist li:first-child input[type="checkbox"]');
+    
+    // Verify text style
+    const textStyle = await page.$eval(
+      '#checklist li:first-child input[type="text"]',
+      el => ({
+        textDecoration: el.style.textDecoration,
+        color: getComputedStyle(el).color
+      })
     );
-    expect(textColor).toBe("rgb(136, 136, 136)");
+    
+    expect(textStyle.textDecoration).toContain('line-through');
+    expect(textStyle.color).toBe('rgb(136, 136, 136)');
   });
 
   test("Reset checklist", async () => {
-    const resetButton = await page.waitForSelector('button:has-text("Reset All")');
-    await resetButton.click();
+    // Ensure there's at least one item
+    if ((await page.$$('#checklist li')).length === 0) {
+      await page.type("#newItem", "Test Item");
+      await page.click('button:has-text("Add Item")');
+      await page.waitForSelector('#checklist li');
+    }
+
+    await page.click('button:has-text("Reset All")');
     await page.waitForSelector('#checklist:empty');
     const items = await page.$$eval("#checklist li", items => items.length);
     expect(items).toBe(0);
