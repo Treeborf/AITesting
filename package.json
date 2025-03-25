@@ -40,7 +40,6 @@
     "msw": "^2.2.1",
     "prettier": "^3.2.4",
     "puppeteer": "^21.9.0",
-    "puppeteer-axe": "^4.10.1"
   },
   "browserslist": {
     "production": [
