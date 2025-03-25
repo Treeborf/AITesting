@@ -4,8 +4,10 @@ describe("Travel Checklist Tests", () => {
   let browser, page;
 
   beforeAll(async () => {
+    // Launch Chrome with necessary flags to avoid sandboxing issues
     browser = await puppeteer.launch({
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],  // Add these flags
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],  // Add flags here
+      headless: true, // Ensure it runs in headless mode (no GUI)
     });
     page = await browser.newPage();
     await page.goto("https://treeborf.github.io/AITesting/checklist.html"); // Adjust for GitHub Pages URL
