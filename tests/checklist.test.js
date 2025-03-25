@@ -4,9 +4,11 @@ describe("Travel Checklist Tests", () => {
   let browser, page;
 
   beforeAll(async () => {
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],  // Add these flags
+    });
     page = await browser.newPage();
-    await page.goto("http://localhost:3000/checklist.html"); // Adjust for GitHub Pages URL
+    await page.goto("https://treeborf.github.io/AITesting/checklist.html"); // Adjust for GitHub Pages URL
   });
 
   afterAll(async () => {
