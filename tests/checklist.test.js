@@ -5,7 +5,14 @@ describe('Travel Checklist Tests', () => {
   let page;
 
   beforeAll(async () => {
-    browser = await puppeteer.launch({ headless: 'new' });
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage'
+    ]
+  });
     page = await browser.newPage();
     await page.goto('https://treeborf.github.io/AITesting/checklist.html');
     await page.waitForSelector('#checklist');
