@@ -19,7 +19,7 @@ describe('Travel Checklist Tests', () => {
     await page.evaluate(() => {
       const buttons = Array.from(document.querySelectorAll('button'));
       const resetButton = buttons.find(btn => btn.textContent.includes('Reset All'));
-      resetButton?.click();
+      if (resetButton) resetButton.click();
     });
     await page.waitForSelector('#checklist:empty');
   });
@@ -28,11 +28,12 @@ describe('Travel Checklist Tests', () => {
     await browser.close();
   });
 
-  // Generic button click helper
   const clickButtonWithText = async (text) => {
     await page.evaluate((btnText) => {
       const buttons = Array.from(document.querySelectorAll('button'));
-      const targetButton = buttons.find(btn => btn.textContent.trim() === btnText);
+      const targetButton = buttons.find(btn => 
+        btn.textContent.trim() === btnText
+      );
       if (targetButton) targetButton.click();
     }, text);
   };
@@ -52,27 +53,41 @@ describe('Travel Checklist Tests', () => {
   test('Prevent empty items', async () => {
     const initialCount = await page.$$eval('#checklist li', items => items.length);
     await clickButtonWithText('Add Item');
-    await page.waitForTimeout(100); // Short delay
+    
+    // Wait for potential UI updates
+    await page.waitForFunction(
+      (initial) => document.querySelectorAll('#checklist li').length === initial,
+      {},
+      initialCount
+    );
+    
     const newCount = await page.$$eval('#checklist li', items => items.length);
     expect(newCount).toBe(initialCount);
   });
 
   test('Toggle item styling', async () => {
-    // Add test item if needed
+    // Ensure we have an item
     if ((await page.$$('#checklist li')).length === 0) {
       await page.type('#newItem', 'Test Item');
       await clickButtonWithText('Add Item');
-      await page.waitForSelector('#checklist li');
+      await page.waitForSelector('#checklist li input[type="checkbox"]');
     }
 
-    // Toggle checkbox
-    await page.click('#checklist li:first-child input[type="checkbox"]');
+    // Toggle checkbox and wait for style changes
+    const checkbox = await page.$('#checklist input[type="checkbox"]');
+    await checkbox.click();
     
-    // Verify styling
+    // Wait for style application
+    await page.waitForFunction(() => {
+      const textInput = document.querySelector('#checklist input[type="text"]');
+      return getComputedStyle(textInput).textDecoration.includes('line-through');
+    });
+
+    // Verify styles
     const style = await page.$eval(
-      '#checklist li:first-child input[type="text"]',
+      '#checklist input[type="text"]',
       el => ({
-        textDecoration: el.style.textDecoration,
+        textDecoration: getComputedStyle(el).textDecoration,
         color: getComputedStyle(el).color
       })
     );
