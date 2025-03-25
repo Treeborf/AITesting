@@ -9,7 +9,7 @@ describe("Travel Checklist Tests", () => {
       headless: true,
     });
     page = await browser.newPage();
-    await page.goto("http://localhost:3000/checklist.html"); // Adjust for GitHub Pages URL
+    await page.goto("https://treeborf.github.io/AITesting/checklist.html"); // Adjust for GitHub Pages URL
   });
 
   afterAll(async () => {
