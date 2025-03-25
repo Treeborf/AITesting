@@ -17,8 +17,8 @@ jobs:
 
     steps:
     - name: Check Repo
-    - uses: actions/checkout@v4
-    - with:
+      uses: actions/checkout@v4
+      with:
         ref: main
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
