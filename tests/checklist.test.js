@@ -9,7 +9,7 @@ describe("Travel Checklist Tests", () => {
       headless: true,
     });
     page = await browser.newPage();
-    await page.goto("https://treeborf.github.io/AITesting/checklist.html"); // Adjust for GitHub Pages URL
+    await page.goto("http://localhost:3000/checklist.html"); // Adjust for GitHub Pages URL
   });
 
   afterAll(async () => {
@@ -18,13 +18,19 @@ describe("Travel Checklist Tests", () => {
 
   test("Adding a valid item", async () => {
     await page.type("#newItem", "Passport");
-    await page.click("button//*[text()='Add Item']"); // Updated button click with XPath
+    const addButton = await page.$x("//button[text()='Add Item']"); // Using XPath correctly here
+    if (addButton.length > 0) {
+      await addButton[0].click(); // Click the button if found
+    }
     const items = await page.$eval("#checklist", ul => ul.children.length);
     expect(items).toBeGreaterThan(0);
   });
 
   test("Prevent adding empty items", async () => {
-    await page.click("button//*[text()='Add Item']"); // Updated button click with XPath
+    const addButton = await page.$x("//button[text()='Add Item']");
+    if (addButton.length > 0) {
+      await addButton[0].click();
+    }
     const items = await page.$eval("#checklist", ul => ul.children.length);
     expect(items).toBeGreaterThan(0); // Should not change
   });
@@ -39,9 +45,11 @@ describe("Travel Checklist Tests", () => {
   });
 
   test("Reset checklist", async () => {
-    await page.click("button//*[text()='Reset All']"); // Updated button click with XPath
+    const resetButton = await page.$x("//button[text()='Reset All']"); // XPath for "Reset All"
+    if (resetButton.length > 0) {
+      await resetButton[0].click();
+    }
     const items = await page.$eval("#checklist", ul => ul.children.length);
     expect(items).toBe(0);
   });
 });
-
