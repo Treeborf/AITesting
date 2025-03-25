@@ -1,98 +1,92 @@
-const puppeteer = require("puppeteer");
+const puppeteer = require('puppeteer');
 
-describe("Travel Checklist Tests", () => {
-  let browser, page;
+describe('Travel Checklist Tests', () => {
+  let browser;
+  let page;
 
   beforeAll(async () => {
-    browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
-    });
+    browser = await puppeteer.launch({ headless: 'new' });
     page = await browser.newPage();
-    await page.goto("https://treeborf.github.io/AITesting/checklist.html");
+    await page.goto('https://treeborf.github.io/AITesting/checklist.html');
     await page.waitForSelector('#checklist');
   }, 15000);
+
+  beforeEach(async () => {
+    // Reset state before each test
+    await page.click('button:has-text("Reset All")');
+    await page.waitForSelector('#checklist:empty');
+  });
 
   afterAll(async () => {
     await browser.close();
   });
 
-  test("Adding a valid item", async () => {
-    // Clear existing items using XPath
-    const resetButton = await page.$x('//button[contains(text(), "Reset All")]');
-    if (resetButton.length > 0) await resetButton[0].click();
+  // Helper function to click buttons by visible text
+  const clickButton = async (text) => {
+    const [button] = await page.$x(`//button[contains(., '${text}')]`);
+    if (button) await button.click();
+  };
+
+  test('Add valid item to checklist', async () => {
+    // Test data
+    const testItem = 'Passport';
     
-    await page.type("#newItem", "Passport");
-    // Use XPath for text matching
-    const addButton = await page.$x('//button[contains(text(), "Add Item")]');
-    await addButton[0].click();
+    // Add item
+    await page.type('#newItem', testItem);
+    await clickButton('Add Item');
     
+    // Verify addition
     await page.waitForSelector('#checklist li');
-    const items = await page.$$eval("#checklist li", items => items.length);
-    expect(items).toBe(1);
-  });
-
-  test("Prevent adding empty items", async () => {
-    const initialCount = await page.$$eval("#checklist li", items => items.length);
-    
-    // Clear input properly
-    await page.focus('#newItem');
-    await page.keyboard.down('Control');
-    await page.keyboard.press('A');
-    await page.keyboard.up('Control');
-    await page.keyboard.press('Backspace');
-    
-    const addButton = await page.$x('//button[contains(text(), "Add Item")]');
-    await addButton[0].click();
-    
-    await page.waitForTimeout(500); // More reliable than Promise.resolve
-    const newCount = await page.$$eval("#checklist li", items => items.length);
-    expect(newCount).toBe(initialCount);
-  });
-
-  test("Check item and verify strikethrough", async () => {
-    // Add test item if needed using reliable selectors
-    if ((await page.$$('#checklist li')).length === 0) {
-      await page.type("#newItem", "Test Item");
-      const addBtn = await page.$x('//button[contains(text(), "Add Item")]');
-      await addBtn[0].click();
-      await page.waitForSelector('#checklist li');
-    }
-
-    // Check the first checkbox
-    await page.click('#checklist li:first-child input[type="checkbox"]');
-    
-    // Verify text input style (matches your HTML structure)
-    const textStyle = await page.$eval(
-      '#checklist li:first-child input[type="text"]',
-      el => ({
-        textDecoration: el.style.textDecoration,
-        color: getComputedStyle(el).color
-      })
+    const items = await page.$$eval('#checklist li', items => 
+      items.map(item => item.querySelector('input[type="text"]').value)
     );
     
-    expect(textStyle.textDecoration).toContain('line-through');
-    expect(textStyle.color).toBe('rgb(136, 136, 136)');
+    expect(items).toContain(testItem);
   });
 
-  test("Reset checklist", async () => {
-    // Ensure there's at least one item
-    if ((await page.$$('#checklist li')).length === 0) {
-      await page.type("#newItem", "Test Item");
-      const addBtn = await page.$x('//button[contains(text(), "Add Item")]');
-      await addBtn[0].click();
-      await page.waitForSelector('#checklist li');
-    }
+  test('Prevent adding empty items', async () => {
+    // Attempt to add empty item
+    await clickButton('Add Item');
+    
+    // Verify no items added
+    const items = await page.$$('#checklist li');
+    expect(items.length).toBe(0);
+  });
 
-    const resetBtn = await page.$x('//button[contains(text(), "Reset All")]');
-    await resetBtn[0].click();
+  test('Toggle item and verify styling', async () => {
+    // Add test item
+    await page.type('#newItem', 'Test Item');
+    await clickButton('Add Item');
+    await page.waitForSelector('#checklist li');
     
-    // Wait for list to clear
-    await page.waitForFunction(() => {
-      return document.querySelectorAll('#checklist li').length === 0;
-    });
+    // Toggle checkbox
+    const checkbox = await page.$('#checklist input[type="checkbox"]');
+    await checkbox.click();
     
-    const items = await page.$$eval("#checklist li", items => items.length);
-    expect(items).toBe(0);
+    // Verify styling
+    const textInput = await page.$('#checklist input[type="text"]');
+    const style = await textInput.evaluate(el => ({
+      textDecoration: el.style.textDecoration,
+      color: getComputedStyle(el).color
+    }));
+    
+    expect(style.textDecoration).toContain('line-through');
+    expect(style.color).toBe('rgb(136, 136, 136)');
+  });
+
+  test('Reset checklist removes all items', async () => {
+    // Add some items
+    await page.type('#newItem', 'Item 1');
+    await clickButton('Add Item');
+    await page.type('#newItem', 'Item 2');
+    await clickButton('Add Item');
+    
+    // Reset
+    await clickButton('Reset All');
+    
+    // Verify empty list
+    await page.waitForSelector('#checklist:empty');
+    const items = await page.$$('#checklist li');
+    expect(items.length).toBe(0);
   });
 });
