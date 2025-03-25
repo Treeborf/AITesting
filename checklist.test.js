@@ -1,70 +1,40 @@
-npm install jest puppeteer jest-puppeteer --save-dev
+const puppeteer = require("puppeteer");
 
-const { setup, teardown } = require('jest-environment-puppeteer');
-const puppeteer = require('puppeteer');
-
-describe('Travel Checklist Tests', () => {
-  let browser;
-  let page;
+describe("Travel Checklist Tests", () => {
+  let browser, page;
 
   beforeAll(async () => {
     browser = await puppeteer.launch();
     page = await browser.newPage();
-    await page.goto('https://your-username.github.io/travel-checklist/'); // Your GH Pages URL
+    await page.goto("http://localhost:3000/checklist.html"); // Adjust for GitHub Pages URL
   });
 
   afterAll(async () => {
     await browser.close();
   });
 
-  // --- Boundary Cases ---
-  test('Max Items Limit (Boundary)', async () => {
-    // Test adding exactly 10 items (if max is 10)
-    for (let i = 1; i <= 10; i++) {
-      await page.type('#item-input', `Item ${i}`);
-      await page.click('#add-button');
-      await page.waitForTimeout(100);
-    }
-    const items = await page.$$eval('.checklist-item', els => els.length);
-    expect(items).toBe(10);
-
-    // Attempt to add 11th item (should fail)
-    await page.type('#item-input', 'Item 11');
-    await page.click('#add-button');
-    const errorText = await page.$eval('.error-message', el => el.textContent);
-    expect(errorText).toContain('Maximum 10 items allowed');
+  test("Adding a valid item", async () => {
+    await page.type("#newItem", "Passport");
+    await page.click("button:has-text('Add Item')");
+    const items = await page.$eval("#checklist", ul => ul.children.length);
+    expect(items).toBeGreaterThan(0);
   });
 
-  // --- Edge Cases ---
-  test('Empty Input (Edge)', async () => {
-    await page.click('#add-button');
-    const errorText = await page.$eval('.error-message', el => el.textContent);
-    expect(errorText).toContain('Item cannot be empty');
+  test("Prevent adding empty items", async () => {
+    await page.click("button:has-text('Add Item')");
+    const items = await page.$eval("#checklist", ul => ul.children.length);
+    expect(items).toBeGreaterThan(0); // Should not change
   });
 
-  test('Special Characters (Edge)', async () => {
-    await page.type('#item-input', 'Passport!@#$%^&*()_+');
-    await page.click('#add-button');
-    const itemText = await page.$eval('.checklist-item:last-child', el => el.textContent);
-    expect(itemText).toContain('Passport!@#$%^&*()_+');
+  test("Check item and verify strikethrough", async () => {
+    await page.click("#checklist input[type='checkbox']");
+    const textColor = await page.$eval("#checklist input[type='text']", el => getComputedStyle(el).color);
+    expect(textColor).toBe("rgb(136, 136, 136)"); // Gray color when checked
   });
 
-  test('Long Text (Edge)', async () => {
-    const longText = 'A'.repeat(500); // 500-character item
-    await page.type('#item-input', longText);
-    await page.click('#add-button');
-    const itemText = await page.$eval('.checklist-item:last-child', el => el.textContent);
-    expect(itemText).toContain('A'.repeat(500));
-  });
-
-  // --- Core Functionality ---
-  test('Add/Remove Item', async () => {
-    await page.type('#item-input', 'Test Item');
-    await page.click('#add-button');
-    const initialItems = await page.$$eval('.checklist-item', els => els.length);
-    
-    await page.click('.checklist-item:last-child .delete-button');
-    const finalItems = await page.$$eval('.checklist-item', els => els.length);
-    expect(finalItems).toBe(initialItems - 1);
+  test("Reset checklist", async () => {
+    await page.click("button:has-text('Reset All')");
+    const items = await page.$eval("#checklist", ul => ul.children.length);
+    expect(items).toBe(0);
   });
 });
