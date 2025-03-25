@@ -30,6 +30,7 @@ jobs:
       run: npm install --save-dev jest
     - name: Install Puppeteer
       run: npm install puppeteer@latest
+    - run: npm install --save-dev @types/jest @types/puppeteer
     - run: npm install  # Replaces npm ci since package-lock.json does not exist
     - run: npm run build --if-present
     - name: Run Jest Tests
